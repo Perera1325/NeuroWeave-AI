@@ -22,7 +22,7 @@ class BrainVisualizer:
             x = np.random.normal(0, 1)
             y = np.random.normal(0, 0.6)
 
-            if x**2 + (y*1.5)**2 < 2.5:
+            if x**2 + (y * 1.5) ** 2 < 2.5:
                 positions[i] = (x, y)
                 G.add_node(i)
 
@@ -38,7 +38,7 @@ class BrainVisualizer:
 
         return random.sample(list(self.G.nodes()), 15)
 
-    def animate(self):
+    def animate(self, intensity=1.0):
 
         fig, ax = plt.subplots(figsize=(8, 8))
         ax.set_facecolor("black")
@@ -48,38 +48,4 @@ class BrainVisualizer:
             ax.clear()
             ax.set_facecolor("black")
 
-            active_nodes = self.random_signal()
-
-            # Edges
-            nx.draw_networkx_edges(
-                self.G,
-                self.pos,
-                edge_color="cyan",
-                alpha=0.08,
-                width=1,
-                ax=ax
-            )
-
-            # Node colors
-            node_colors = []
-
-            for node in self.G.nodes():
-                if node in active_nodes:
-                    node_colors.append("orange")
-                else:
-                    node_colors.append("deepskyblue")
-
-            nx.draw_networkx_nodes(
-                self.G,
-                self.pos,
-                node_color=node_colors,
-                node_size=40,
-                alpha=0.9,
-                ax=ax
-            )
-
-            ax.set_title("NeuroWeave Learning Brain", color="white")
-            ax.axis("off")
-
-        ani = FuncAnimation(fig, update, frames=30, interval=500)
-        plt.show()
+            active_nodes = self.random_s
