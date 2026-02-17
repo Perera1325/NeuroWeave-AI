@@ -27,3 +27,20 @@ def predict_sample(nn, sample):
 
     return prediction, confidence
 
+import pickle
+
+
+def save_model(model, path="models/neural_model.pkl"):
+
+    with open(path, "wb") as f:
+        pickle.dump(model, f)
+
+
+def load_model(path="models/neural_model.pkl"):
+
+    with open(path, "rb") as f:
+        model = pickle.load(f)
+
+    return model
+
+

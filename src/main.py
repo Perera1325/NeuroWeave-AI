@@ -1,13 +1,23 @@
+import os
 import numpy as np
+
 from brain_visualizer import BrainVisualizer
 from neural_network import NeuralNetwork
-from utils import plot_loss, accuracy, predict_sample
+from utils import (
+    plot_loss,
+    accuracy,
+    predict_sample,
+    save_model,
+    load_model
+)
 from data_loader import load_data
 
 
-if __name__ == "__main__":
+MODEL_PATH = "models/neural_model.pkl"
 
-    # Load dataset
+
+def train_model():
+
     X_train, X_test, y_train, y_test = load_data()
 
     nn = NeuralNetwork(input_size=X_train.shape[1])
@@ -18,16 +28,30 @@ if __name__ == "__main__":
     predictions = nn.forward(X_test)
     acc = accuracy(y_test, predictions)
 
-    print(f"\nModel Accuracy: {acc * 100:.2f}%")
+    print(f"\nFinal Accuracy: {acc * 100:.2f}%")
 
     plot_loss(losses)
 
+    save_model(nn, MODEL_PATH)
+
+    print("Model saved successfully.")
+
+    return nn
+
+
+def main():
+
+    if os.path.exists(MODEL_PATH):
+        print("Loading existing model...")
+        nn = load_model(MODEL_PATH)
+    else:
+        nn = train_model()
+
     brain = BrainVisualizer()
 
-    # Interactive loop
     while True:
 
-        print("\nEnter values separated by space (or type 'exit'):")
+        print("\nEnter 30 feature values separated by space (or type 'exit'):")
 
         user_input = input("> ")
 
@@ -35,6 +59,7 @@ if __name__ == "__main__":
             break
 
         try:
+
             values = np.array(
                 [float(x) for x in user_input.split()]
             ).reshape(1, -1)
@@ -46,8 +71,11 @@ if __name__ == "__main__":
             print(f"Prediction: {label}")
             print(f"Confidence: {conf:.2f}")
 
-            # Brain reacts to confidence
             brain.animate(intensity=conf)
 
-        except Exception as e:
-            print("Invalid input. Please try again.")
+        except Exception:
+            print("Invalid input. Please enter exactly 30 numbers.")
+
+
+if __name__ == "__main__":
+    main()
