@@ -5,18 +5,35 @@ from neural_network import NeuralNetwork
 
 if __name__ == "__main__":
 
+    # XOR dataset
+    X = np.array([
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 1]
+    ])
+
+    y = np.array([
+        [0],
+        [1],
+        [1],
+        [0]
+    ])
+
     # Create neural network
     nn = NeuralNetwork()
 
-    # Sample input
-    X = np.array([[0.5, 0.2, 0.8]])
+    print("Training Neural Network...")
 
-    output = nn.forward(X)
+    losses = nn.train(X, y, epochs=5000)
 
-    print("Neural Network Output:")
-    print(output)
+    print("\nFinal Predictions:")
+    print(nn.forward(X))
 
-    # Visualize brain with signal
+    # Brain visualization
     brain = BrainVisualizer()
-    active = brain.random_signal()
-    brain.draw(active_nodes=active)
+
+    # Activate neurons based on learning intensity
+    active_nodes = brain.random_signal()
+
+    brain.draw(active_nodes=active_nodes)
