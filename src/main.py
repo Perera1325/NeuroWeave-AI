@@ -1,6 +1,7 @@
 import numpy as np
 from brain_visualizer import BrainVisualizer
 from neural_network import NeuralNetwork
+from utils import plot_loss
 
 
 if __name__ == "__main__":
@@ -20,20 +21,18 @@ if __name__ == "__main__":
         [0]
     ])
 
-    # Create neural network
     nn = NeuralNetwork()
 
     print("Training Neural Network...")
 
-    losses = nn.train(X, y, epochs=5000)
+    losses = nn.train(X, y, epochs=3000)
 
     print("\nFinal Predictions:")
     print(nn.forward(X))
 
-    # Brain visualization
+    # Plot loss
+    plot_loss(losses)
+
+    # Animate brain
     brain = BrainVisualizer()
-
-    # Activate neurons based on learning intensity
-    active_nodes = brain.random_signal()
-
-    brain.draw(active_nodes=active_nodes)
+    brain.animate()

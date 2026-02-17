@@ -2,13 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 import random
+from matplotlib.animation import FuncAnimation
 
 
 class BrainVisualizer:
 
     def __init__(self, neurons=120, connections=250):
+
         self.neurons = neurons
         self.connections = connections
+        self.G, self.pos = self.generate_brain()
 
     def generate_brain(self):
 
@@ -31,44 +34,52 @@ class BrainVisualizer:
 
         return G, positions
 
-    def draw(self, active_nodes=None):
-
-        G, pos = self.generate_brain()
-
-        plt.figure(figsize=(8, 8))
-        ax = plt.gca()
-        ax.set_facecolor("black")
-
-        # Draw edges
-        nx.draw_networkx_edges(
-            G,
-            pos,
-            edge_color="cyan",
-            alpha=0.1,
-            width=1
-        )
-
-        # Default neurons
-        node_colors = []
-        for node in G.nodes():
-            if active_nodes and node in active_nodes:
-                node_colors.append("orange")
-            else:
-                node_colors.append("deepskyblue")
-
-        nx.draw_networkx_nodes(
-            G,
-            pos,
-            node_color=node_colors,
-            node_size=30,
-            alpha=0.9
-        )
-
-        plt.axis("off")
-        plt.title("NeuroWeave Circuit Brain", color="white")
-        plt.show()
-
     def random_signal(self):
 
-        # Random active neurons
-        return random.sample(range(self.neurons), 10)
+        return random.sample(list(self.G.nodes()), 15)
+
+    def animate(self):
+
+        fig, ax = plt.subplots(figsize=(8, 8))
+        ax.set_facecolor("black")
+
+        def update(frame):
+
+            ax.clear()
+            ax.set_facecolor("black")
+
+            active_nodes = self.random_signal()
+
+            # Edges
+            nx.draw_networkx_edges(
+                self.G,
+                self.pos,
+                edge_color="cyan",
+                alpha=0.08,
+                width=1,
+                ax=ax
+            )
+
+            # Node colors
+            node_colors = []
+
+            for node in self.G.nodes():
+                if node in active_nodes:
+                    node_colors.append("orange")
+                else:
+                    node_colors.append("deepskyblue")
+
+            nx.draw_networkx_nodes(
+                self.G,
+                self.pos,
+                node_color=node_colors,
+                node_size=40,
+                alpha=0.9,
+                ax=ax
+            )
+
+            ax.set_title("NeuroWeave Learning Brain", color="white")
+            ax.axis("off")
+
+        ani = FuncAnimation(fig, update, frames=30, interval=500)
+        plt.show()
