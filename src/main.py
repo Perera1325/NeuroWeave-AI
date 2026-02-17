@@ -1,38 +1,31 @@
-import numpy as np
 from brain_visualizer import BrainVisualizer
 from neural_network import NeuralNetwork
-from utils import plot_loss
+from utils import plot_loss, accuracy
+from data_loader import load_data
 
 
 if __name__ == "__main__":
 
-    # XOR dataset
-    X = np.array([
-        [0, 0],
-        [0, 1],
-        [1, 0],
-        [1, 1]
-    ])
+    # Load dataset
+    X_train, X_test, y_train, y_test = load_data()
 
-    y = np.array([
-        [0],
-        [1],
-        [1],
-        [0]
-    ])
+    # Create neural network
+    nn = NeuralNetwork(input_size=X_train.shape[1])
 
-    nn = NeuralNetwork()
+    print("Training on real dataset...")
 
-    print("Training Neural Network...")
+    losses = nn.train(X_train, y_train, epochs=2000)
 
-    losses = nn.train(X, y, epochs=3000)
+    # Predictions
+    predictions = nn.forward(X_test)
 
-    print("\nFinal Predictions:")
-    print(nn.forward(X))
+    acc = accuracy(y_test, predictions)
+
+    print(f"\nModel Accuracy: {acc * 100:.2f}%")
 
     # Plot loss
     plot_loss(losses)
 
-    # Animate brain
+    # Brain animation intensity based on accuracy
     brain = BrainVisualizer()
     brain.animate()

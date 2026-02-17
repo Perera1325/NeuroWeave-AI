@@ -3,17 +3,18 @@ import numpy as np
 
 class NeuralNetwork:
 
-    def __init__(self, input_size=2, hidden_size=5, output_size=1):
+    def __init__(self, input_size, hidden_size=16, output_size=1):
 
         np.random.seed(42)
 
-        self.W1 = np.random.randn(input_size, hidden_size)
+        self.W1 = np.random.randn(input_size, hidden_size) * 0.1
         self.b1 = np.zeros((1, hidden_size))
 
-        self.W2 = np.random.randn(hidden_size, output_size)
+        self.W2 = np.random.randn(hidden_size, output_size) * 0.1
         self.b2 = np.zeros((1, output_size))
 
-        self.learning_rate = 0.1
+        self.learning_rate = 0.01
+
 
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
