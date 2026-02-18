@@ -2,6 +2,7 @@ import os
 import numpy as np
 
 from brain_visualizer import BrainVisualizer
+from brain_3d import Brain3D
 from neural_network import NeuralNetwork
 from utils import (
     plot_loss,
@@ -18,22 +19,26 @@ MODEL_PATH = "models/neural_model.pkl"
 
 def train_model():
 
+    # Load dataset
     X_train, X_test, y_train, y_test = load_data()
 
+    # Create neural network
     nn = NeuralNetwork(input_size=X_train.shape[1])
 
     print("Training model...")
     losses = nn.train(X_train, y_train, epochs=1500)
 
+    # Evaluate
     predictions = nn.forward(X_test)
     acc = accuracy(y_test, predictions)
 
     print(f"\nFinal Accuracy: {acc * 100:.2f}%")
 
+    # Plot training loss
     plot_loss(losses)
 
+    # Save model
     save_model(nn, MODEL_PATH)
-
     print("Model saved successfully.")
 
     return nn
@@ -41,13 +46,15 @@ def train_model():
 
 def main():
 
+    # Load or train model
     if os.path.exists(MODEL_PATH):
         print("Loading existing model...")
         nn = load_model(MODEL_PATH)
     else:
         nn = train_model()
 
-    brain = BrainVisualizer()
+    # Initialize visualizers
+    brain2d = BrainVisualizer()
 
     while True:
 
@@ -59,11 +66,12 @@ def main():
             break
 
         try:
-
+            # Convert input to numpy
             values = np.array(
                 [float(x) for x in user_input.split()]
             ).reshape(1, -1)
 
+            # Predict
             pred, conf = predict_sample(nn, values)
 
             label = "Malignant" if pred == 1 else "Benign"
@@ -71,7 +79,12 @@ def main():
             print(f"Prediction: {label}")
             print(f"Confidence: {conf:.2f}")
 
-            brain.animate(intensity=conf)
+            # 2D Brain Animation (optional)
+            brain2d.animate(intensity=conf)
+
+            # 3D Brain Animation
+            brain3d = Brain3D()
+            brain3d.animate(intensity=conf)
 
         except Exception:
             print("Invalid input. Please enter exactly 30 numbers.")
